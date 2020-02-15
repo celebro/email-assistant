@@ -3,8 +3,9 @@ import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 import immer from 'immer';
 
-// @ts-ignore
+import * as log from './log.js';
 
+// @ts-ignore
 const produce = immer.produce;
 
 const stateDirectory = dirname(fileURLToPath(import.meta.url));
@@ -20,9 +21,9 @@ try {
     state = {};
     if (error.code == 'ENOENT') {
         // File does not exist
-        console.warn('Creating new state file, no already published content will be synced');
+        log.warn('Creating new state file, no already published content will be synced');
     } else {
-        console.error(error);
+        log.error(error);
     }
 }
 
@@ -31,7 +32,7 @@ let timeout = null;
 function saveState() {
     fs.writeFile(statePath, JSON.stringify(state, null, 4), err => {
         if (err) {
-            console.error('err');
+            log.error('err');
         }
     });
 }

@@ -1,10 +1,27 @@
-import { getAllItems } from "./api.js";
-import { state, updateState } from "./state.js";
+import { getAllItems } from './api.js';
+import { state, updateState } from './state.js';
+import { sendEmail, testEmail } from './email.js';
+import * as log from './log.js';
 
-processFeed();
+main();
+// testEmail();
+
+async function main(params) {
+    while (true) {
+        log.info('Starting loop');
+        try {
+            await processFeed();
+        } catch (e) {
+            log.error(e);
+        }
+
+        await wait(3 * 60 * 1000);
+    }
+}
 
 async function processFeed() {
     const items = await getAllItems();
+    log.info(`Fetched ${items.length} items`);
     // console.log(JSON.stringify(items, null, 2));
 
     const lastSyncDate = state.lastSyncDate;
@@ -14,7 +31,7 @@ async function processFeed() {
     const messagesToSend = [];
 
     for (const item of items) {
-        if (item.type !== "message") {
+        if (item.type !== 'message') {
             continue;
         }
 
@@ -23,6 +40,7 @@ async function processFeed() {
             syncDate = item.date;
             syncId = message.id;
             if (!lastSyncDate) {
+                log.info('Initial fetch, only store timestamp');
                 break;
             }
         }
@@ -34,15 +52,25 @@ async function processFeed() {
         messagesToSend.push(message);
     }
 
-    console.log(messagesToSend.length);
+    log.info(`Found ${messagesToSend.length} new messages`);
+
     if (messagesToSend.length > 0) {
-        console.log(JSON.stringify(messagesToSend, null, 2));
+        messagesToSend.reverse();
+        // console.log(JSON.stringify(messagesToSend, null, 2));
+        sendEmail(messagesToSend);
     }
 
     if (syncDate) {
-        // updateState(s => {
-        //     s.lastSyncDate = syncDate;
-        //     s.lastSyncId = syncId;
-        // });
+        log.info(`Updating sync state ${syncDate} /  ${syncId}`);
+        updateState(s => {
+            s.lastSyncDate = syncDate;
+            s.lastSyncId = syncId;
+        });
     }
+}
+
+function wait(ms) {
+    return new Promise(resolve => {
+        setTimeout(resolve, ms);
+    });
 }

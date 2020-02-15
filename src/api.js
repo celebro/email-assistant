@@ -1,10 +1,11 @@
-import fetch from "node-fetch";
-import jsdom from "jsdom";
+import fetch from 'node-fetch';
+import jsdom from 'jsdom';
 
-import { state, updateState } from "./state.js";
-import config from "./config.js";
+import { state, updateState } from './state.js';
+import config from './config.js';
+import * as log from './log.js';
 
-const urlBase = "https://vrtec.easistent.com";
+const urlBase = 'https://vrtec.easistent.com';
 const urls = {
     login: `${urlBase}/login`,
     feed: `${urlBase}/parent/feed/month`
@@ -34,20 +35,22 @@ async function makeRequest(url) {
         session = await login();
     }
 
+    log.info('fetch', url);
     let response = await fetch(url, {
         headers: {
             cookie: session
         },
-        redirect: "manual"
+        redirect: 'manual'
     });
 
     if (!response.ok) {
         session = await login();
+        log.info('fetch', url);
         response = await fetch(url, {
             headers: {
                 cookie: session
             },
-            redirect: "manual"
+            redirect: 'manual'
         });
     }
 
@@ -58,30 +61,21 @@ async function makeRequest(url) {
 
         return response;
     } else {
-        throw new Error("Failed to make request " + url);
+        throw new Error('Failed to make request ' + url);
     }
 }
 
-function doFetch(url, session) {
-    return fetch(url, {
-        headers: {
-            cookie: session
-        },
-        redirect: "manual"
-    });
-}
-
 async function login() {
-    console.log("login");
+    log.info('login');
     const { token, session } = await getLoginToken();
 
     const params = new URLSearchParams();
-    params.append("_token", token);
-    params.append("username", config.username);
-    params.append("password", config.password);
+    params.append('_token', token);
+    params.append('username', config.username);
+    params.append('password', config.password);
 
-    const loginResponse = await fetch("https://vrtec.easistent.com/login", {
-        method: "POST",
+    const loginResponse = await fetch('https://vrtec.easistent.com/login', {
+        method: 'POST',
         headers: {
             // authority: 'vrtec.easistent.com',
             // 'cache-control': 'max-age=0',
@@ -100,26 +94,12 @@ async function login() {
             cookie: `${session}`
         },
         body: params,
-        redirect: "manual"
+        redirect: 'manual'
     });
-
-    // if (loginResponse.ok) {
-    // console.log(loginResponse.headers.raw());
-    // console.log(JSON.stringify(loginResponse.headers.raw(), null, 2));
-    // const setCookie = loginResponse.headers.raw()['set-cookie'][0];
-    // console.log(setCookie);
-    // const cookie = setCookie.split(';')[0];
-
-    // // console.log(params.toString());
-    // console.log(await loginResponse.text());
-    // process.exit();
 
     const cookie = getSessionCookie(loginResponse);
 
     return cookie;
-    // } else {
-    // throw new Error('Login request failed');
-    // }
 }
 
 async function getLoginToken() {
@@ -129,14 +109,14 @@ async function getLoginToken() {
 
     const document = dom.window.document;
     const input = document.querySelector('input[name="_token"]');
-    const token = input.getAttribute("value");
+    const token = input.getAttribute('value');
 
     const session = getSessionCookie(response);
     return { token, session };
 }
 
 function getSessionCookie(response) {
-    const setCookie = response.headers.raw()["set-cookie"][0];
-    const cookie = setCookie.split(";")[0];
+    const setCookie = response.headers.raw()['set-cookie'][0];
+    const cookie = setCookie.split(';')[0];
     return cookie;
 }
