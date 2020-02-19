@@ -9,3 +9,4 @@ services:
     volumes:
       - ./data:/usr/src/app/data
     restart: always
+    user: 1000:1000
