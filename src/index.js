@@ -3,21 +3,39 @@ import { state, updateState } from './state.js';
 import { sendEmail, testEmail } from './email.js';
 import * as log from './log.js';
 
-main();
+console.log('test');
+
+mainLoop();
 // testEmail();
 
-async function main(params) {
-    while (true) {
-        log.info('Starting loop');
-        try {
-            await processFeed();
-        } catch (e) {
-            log.error(e);
-        }
+async function mainLoop(params) {
+    log.info('Starting loop');
+    try {
+        await processFeed();
+    } catch (e) {
+        log.error(e);
+    }
 
-        await wait(3 * 60 * 1000);
+    if (mainLoopTimeout !== -1) {
+        mainLoopTimeout = setTimeout(mainLoop, 3 * 60 * 1000);
     }
 }
+
+let mainLoopTimeout;
+function gracefullShutdown() {
+    clearTimeout(mainLoopTimeout);
+    mainLoopTimeout = -1;
+}
+
+process.once('SIGTERM', () => {
+    log.info('SIGTERM');
+    gracefullShutdown();
+});
+
+process.once('SIGINT', function(code) {
+    log.info('SIGINT');
+    gracefullShutdown();
+});
 
 async function processFeed() {
     const items = await getAllItems();
@@ -67,10 +85,4 @@ async function processFeed() {
             s.lastSyncId = syncId;
         });
     }
-}
-
-function wait(ms) {
-    return new Promise(resolve => {
-        setTimeout(resolve, ms);
-    });
 }

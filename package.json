@@ -10,7 +10,7 @@
     "scripts": {
         "start": "node src/index.js",
         "build": "docker build -t celebro/easistent .",
-        "startDocker": "docker run --name=easistentdev --mount type=bind,source=\"$(pwd)\"/data,target=\"/usr/src/app/data\" celebro/easistent",
+        "startDocker": "docker run --rm --name=easistentdev --mount type=bind,source=\"$(pwd)\"/data,target=\"/usr/src/app/data\" celebro/easistent",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "",
@@ -27,6 +27,18 @@
     "prettier": {
         "printWidth": 120,
         "tabWidth": 4,
-        "singleQuote": true
+        "singleQuote": true,
+        "overrides": [
+            {
+                "files": [
+                    "*.yml",
+                    "Dockerfile"
+                ],
+                "options": {
+                    "tabWidth": 2,
+                    "singleQuote": false
+                }
+            }
+        ]
     }
 }

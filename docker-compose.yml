@@ -1,0 +1,11 @@
+# https://docs.docker.com/compose/compose-file/
+
+version: "3"
+services:
+  node:
+    container_name: easistent
+    build: .
+    image: celebro/easistent:latest
+    volumes:
+      - ./data:/usr/src/app/data
+    restart: always

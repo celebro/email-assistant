@@ -5,8 +5,6 @@ import config from './config.js';
 export async function sendEmail(messages) {
     const transporter = nodemailer.createTransport(config.emailServer);
 
-    messages.length = 1;
-
     for (const message of messages) {
         const sender = message.sender;
 
