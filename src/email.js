@@ -12,7 +12,7 @@ export async function sendEmail(messages) {
         <div style="background-color:#f2f2f2;font-family:arial;color:#666666">
             <div style="padding:10px;margin:0;background-color:#ee984f;color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:bold">
                 <div style="margin:0 auto;width:80%">
-                    <b style="font-size:20px">eAsistent</b><b style="font-weight:lighter;font-size:20px"> | </b><b style="font-weight:lighter;font-size:16px">za vrtce</b>
+                    <b style="font-size:20px">Email assistant</b><b style="font-weight:lighter;font-size:20px"> | </b><b style="font-weight:lighter;font-size:16px">za vrtce</b>
                 </div>
             </div>
 
@@ -33,8 +33,6 @@ export async function sendEmail(messages) {
             subject: message.subject,
             html: html
         });
-
-        // console.log(JSON.stringify(info, null, 2));
     }
 }
 

@@ -1,16 +1,16 @@
 {
-    "name": "vrtec",
+    "name": "email-assistant",
     "version": "1.0.0",
-    "description": "Node / docker service that sends email with full content for every new message on vrtec.easistent.com",
+    "description": "Node / docker service that sends email with full content for every message on Slovenian kindergarten portal",
     "repository": {
         "type": "git",
-        "url": "git@github.com:celebro/easistent-email.git"
+        "url": "git@github.com:celebro/email-assistant.git"
     },
     "type": "module",
     "scripts": {
         "start": "node src/index.js",
-        "build": "docker build -t celebro/easistent .",
-        "startDocker": "docker run --rm --name=easistentdev --mount type=bind,source=\"$(pwd)\"/data,target=\"/usr/src/app/data\" celebro/easistent",
+        "build": "docker build -t celebro/email-assistant .",
+        "startDocker": "docker run --rm --name=email-assistant-dev --mount type=bind,source=\"$(pwd)\"/data,target=\"/usr/src/app/data\" celebro/email-assistant",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "",

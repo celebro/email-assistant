@@ -3,9 +3,9 @@
 version: "3"
 services:
   node:
-    container_name: easistent
+    container_name: email-assistant
     build: .
-    image: celebro/easistent:latest
+    image: celebro/email-assistant:latest
     volumes:
       - ./data:/usr/src/app/data
     restart: always

@@ -74,23 +74,9 @@ async function login() {
     params.append('username', config.username);
     params.append('password', config.password);
 
-    const loginResponse = await fetch('https://vrtec.easistent.com/login', {
+    const loginResponse = await fetch(urls.login, {
         method: 'POST',
         headers: {
-            // authority: 'vrtec.easistent.com',
-            // 'cache-control': 'max-age=0',
-            // origin: 'https://vrtec.easistent.com',
-            // 'upgrade-insecure-requests': '1',
-            // dnt: '1',
-            // 'content-type': 'application/x-www-form-urlencoded',
-            // 'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36',
-            // 'sec-fetch-user': '?1',
-            // accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
-            // 'sec-fetch-site': 'same-origin',
-            // 'sec-fetch-mode': 'navigate',
-            // referer: 'https://vrtec.easistent.com/login',
-            // 'accept-encoding': 'gzip, deflate, br',
-            // 'accept-language': 'sl,en-US;q=0.9,en;q=0.8,sl-SI;q=0.7',
             cookie: `${session}`
         },
         body: params,

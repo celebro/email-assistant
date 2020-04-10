@@ -1,4 +1,4 @@
-Docker packed node application to monitor new messages at https://vrtec.easistent.com/ and send emails with full message content.
+Docker packed node application to monitor new messages at `https://vrtec.easistent.com` and send emails with full message content.
 
 ### Instructions
 
@@ -6,8 +6,8 @@ Docker packed node application to monitor new messages at https://vrtec.easisten
 
     ```json
     {
-        "username": "<easistent username>",
-        "password": "<easistent password",
+        "username": "<username>",
+        "password": "<password",
         "emailServer": {
             // directly passed to nodemailer (https://nodemailer.com/about/),
             "host": "<email server, e.g. smtp.gmail.com>",
