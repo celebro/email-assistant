@@ -19,7 +19,7 @@
         "immer": "^8.0.1",
         "jsdom": "^15.2.1",
         "node-fetch": "^2.6.1",
-        "nodemailer": "^6.4.2"
+        "nodemailer": "^6.4.16"
     },
     "devDependencies": {
         "prettier": "^1.19.1"
