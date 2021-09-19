@@ -1,0 +1,81 @@
+service: email-assistant
+frameworkVersion: "2"
+
+useDotenv: true
+
+plugins:
+  - serverless-esbuild
+  - serverless-dynamodb-local
+  # https://github.com/serverless/examples/tree/master/aws-node-rest-api-with-dynamodb-and-offline
+  - serverless-offline
+
+custom:
+  esbuild:
+    bundle: true
+    minify: false
+    # external:
+    #     - isin-validator
+    # watch:
+    #     # anymatch-compatible definition (https://github.com/es128/anymatch)
+    #     pattern: ['./index.ts', 'src/**/*.ts'] # default .
+    #     ignore: ['.serverless/**/*', '.build'] # default ['.build', 'dist', 'node_modules']
+
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      migrate: true
+      noStart: true
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: ${opt:region, 'eu-central-1'}
+  memorySize: 128
+  lambdaHashingVersion: 20201221
+  environment:
+    DYNAMODB_TABLE: ${self:service}-${sls:stage}
+    EASISTENT_USERNAME: ${env:EASISTENT_USERNAME}
+    EASISTENT_PASSWORD: ${env:EASISTENT_PASSWORD}
+    EMAIL_FROM: ${env:EMAIL_FROM}
+    EMAIL_TO: ${env:EMAIL_TO}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+        - Effect: Allow
+          Action:
+            - ses:SendEmail
+          Resource: "arn:aws:ses:${self:provider.region}:*:identity/*"
+
+functions:
+  processMessages:
+    handler: src/lambda.handler
+    events:
+      - schedule: rate(5 minutes)
+      # - http:
+      #     path: /
+      #     method: get
+
+resources:
+  Resources:
+    dynamodb:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST

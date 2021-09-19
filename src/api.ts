@@ -1,14 +1,14 @@
-import fetch from 'node-fetch';
-import jsdom from 'jsdom';
+import fetch, { Response } from 'node-fetch';
+import cheerio from 'cheerio';
 
-import { state, updateState } from './state.js';
-import config from './config.js';
-import * as log from './log.js';
+import { state, updateState } from './state';
+import config from './config';
+import * as log from './log';
 
 const urlBase = 'https://vrtec.easistent.com';
 const urls = {
     login: `${urlBase}/login`,
-    feed: `${urlBase}/parent/feed/month`
+    feed: `${urlBase}/parent/feed/month`,
 };
 
 export async function getAllItems() {
@@ -17,19 +17,19 @@ export async function getAllItems() {
     let month = date.getMonth() + 1;
 
     const currentMonthResponse = await makeRequest(`${urls.feed}/${year}/${month}`);
-    const currentJson = await currentMonthResponse.json();
+    const currentJson: any = await currentMonthResponse.json();
 
     date.setMonth(month - 2);
     year = date.getFullYear();
     month = date.getMonth() + 1;
 
     const lastMonthResponse = await makeRequest(`${urls.feed}/${year}/${month}`);
-    const lastJson = await lastMonthResponse.json();
+    const lastJson: any = await lastMonthResponse.json();
 
     return [...currentJson.items, ...lastJson.items];
 }
 
-async function makeRequest(url) {
+async function makeRequest(url: string) {
     let session = state.session;
     if (!session) {
         session = await login();
@@ -38,9 +38,9 @@ async function makeRequest(url) {
     log.info('fetch', url);
     let response = await fetch(url, {
         headers: {
-            cookie: session
+            cookie: session,
         },
-        redirect: 'manual'
+        redirect: 'manual',
     });
 
     if (!response.ok) {
@@ -48,14 +48,14 @@ async function makeRequest(url) {
         log.info('fetch', url);
         response = await fetch(url, {
             headers: {
-                cookie: session
+                cookie: session,
             },
-            redirect: 'manual'
+            redirect: 'manual',
         });
     }
 
     if (response.ok) {
-        updateState(s => {
+        updateState((s) => {
             s.session = getSessionCookie(response);
         });
 
@@ -71,16 +71,16 @@ async function login() {
 
     const params = new URLSearchParams();
     params.append('_token', token);
-    params.append('username', config.username);
-    params.append('password', config.password);
+    params.append('username', config.easistentUsername);
+    params.append('password', config.easistentPassword);
 
     const loginResponse = await fetch(urls.login, {
         method: 'POST',
         headers: {
-            cookie: `${session}`
+            cookie: `${session}`,
         },
         body: params,
-        redirect: 'manual'
+        redirect: 'manual',
     });
 
     const cookie = getSessionCookie(loginResponse);
@@ -89,19 +89,21 @@ async function login() {
 }
 
 async function getLoginToken() {
-    const response = await fetch(urls.login);
+    const response = await fetch(urls.login, {});
     const html = await response.text();
-    const dom = new jsdom.JSDOM(html);
+    const $ = cheerio.load(html);
 
-    const document = dom.window.document;
-    const input = document.querySelector('input[name="_token"]');
-    const token = input.getAttribute('value');
+    const input = $('input[name="_token"]');
+    const token = input.attr('value');
+    if (!token) {
+        throw new Error('Failed to acuire login token');
+    }
 
     const session = getSessionCookie(response);
     return { token, session };
 }
 
-function getSessionCookie(response) {
+function getSessionCookie(response: Response): string {
     const setCookie = response.headers.raw()['set-cookie'][0];
     const cookie = setCookie.split(';')[0];
     return cookie;

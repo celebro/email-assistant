@@ -6,23 +6,30 @@
         "type": "git",
         "url": "git@github.com:celebro/email-assistant.git"
     },
-    "type": "module",
     "scripts": {
-        "start": "node src/index.js",
+        "start": "sls invoke local -f processMessages",
+        "startlocal": "node src/index.js",
         "build": "docker build -t celebro/email-assistant .",
-        "startDocker": "docker run --rm --name=email-assistant-dev --mount type=bind,source=\"$(pwd)\"/data,target=\"/usr/src/app/data\" celebro/email-assistant",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "startDocker": "docker run --rm --name=email-assistant-dev --mount type=bind,source=\"$(pwd)\"/data,target=\"/usr/src/app/data\" celebro/email-assistant"
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "immer": "^8.0.1",
-        "jsdom": "^15.2.1",
-        "node-fetch": "^2.6.1",
-        "nodemailer": "^6.4.16"
+        "@aws-sdk/client-dynamodb": "^3.32.0",
+        "@aws-sdk/client-ses": "^3.32.0",
+        "@aws-sdk/lib-dynamodb": "^3.32.0",
+        "cheerio": "^1.0.0-rc.10",
+        "immer": "^9.0.6",
+        "node-fetch": "^3.0.0"
     },
     "devDependencies": {
-        "prettier": "^1.19.1"
+        "@types/node-fetch": "^3.0.3",
+        "@types/nodemailer": "^6.4.4",
+        "prettier": "^2.4.1",
+        "serverless": "^2.59.0",
+        "serverless-dynamodb-local": "^0.2.40",
+        "serverless-esbuild": "^1.18.1",
+        "serverless-offline": "^8.2.0"
     },
     "prettier": {
         "printWidth": 120,
