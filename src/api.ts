@@ -16,14 +16,16 @@ export async function getAllItems() {
     let year = date.getFullYear();
     let month = date.getMonth() + 1;
 
-    const currentMonthResponse = await makeRequest(`${urls.feed}/${year}/${month}`);
-    const currentJson: any = await currentMonthResponse.json();
-
+    const currentMonthRequest = makeRequest(`${urls.feed}/${year}/${month}`);
     date.setMonth(month - 2);
     year = date.getFullYear();
     month = date.getMonth() + 1;
+    const lastMonthRequest = makeRequest(`${urls.feed}/${year}/${month}`);
 
-    const lastMonthResponse = await makeRequest(`${urls.feed}/${year}/${month}`);
+    const currentMonthResponse = await currentMonthRequest;
+    const currentJson: any = await currentMonthResponse.json();
+
+    const lastMonthResponse = await lastMonthRequest;
     const lastJson: any = await lastMonthResponse.json();
 
     return [...currentJson.items, ...lastJson.items];
