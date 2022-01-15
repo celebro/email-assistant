@@ -15,21 +15,21 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@aws-sdk/client-dynamodb": "^3.32.0",
-        "@aws-sdk/client-ses": "^3.32.0",
-        "@aws-sdk/lib-dynamodb": "^3.32.0",
+        "@aws-sdk/client-dynamodb": "^3.47.0",
+        "@aws-sdk/client-ses": "^3.47.0",
+        "@aws-sdk/lib-dynamodb": "^3.47.0",
         "cheerio": "^1.0.0-rc.10",
-        "immer": "^9.0.6",
-        "node-fetch": "^3.0.0"
+        "immer": "^9.0.12",
+        "node-fetch": "^3.1.0"
     },
     "devDependencies": {
         "@types/node-fetch": "^3.0.3",
         "@types/nodemailer": "^6.4.4",
-        "prettier": "^2.4.1",
-        "serverless": "^2.59.0",
+        "prettier": "^2.5.1",
+        "serverless": "^2.71.0",
         "serverless-dynamodb-local": "^0.2.40",
-        "serverless-esbuild": "^1.18.1",
-        "serverless-offline": "^8.2.0"
+        "serverless-esbuild": "^1.23.3",
+        "serverless-offline": "^8.3.1"
     },
     "prettier": {
         "printWidth": 120,
