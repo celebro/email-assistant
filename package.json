@@ -25,8 +25,9 @@
     "devDependencies": {
         "@types/node-fetch": "^3.0.3",
         "@types/nodemailer": "^6.4.4",
+        "esbuild": "^0.14.29",
         "prettier": "^2.5.1",
-        "serverless": "^2.71.0",
+        "serverless": "^3.10.2",
         "serverless-dynamodb-local": "^0.2.40",
         "serverless-esbuild": "^1.23.3",
         "serverless-offline": "^8.3.1"

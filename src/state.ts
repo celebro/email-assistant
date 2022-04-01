@@ -30,13 +30,6 @@ let timeout: NodeJS.Timeout | undefined = undefined;
 export function updateState(updater: (s: State) => void) {
     const oldState = state;
     state = produce(state, updater);
-    if (state !== oldState && !timeout) {
-        log.info('Updating state');
-        timeout = setTimeout(() => {
-            timeout = undefined;
-            saveState();
-        }, 50);
-    }
 }
 
 // import { fileURLToPath } from 'url';
@@ -83,20 +76,29 @@ async function readState() {
             }
         }
     }
+    dbState = state;
 }
 
-async function saveState() {
-    try {
-        if (config.inAws) {
-            const putCommand = new DynamoLib.PutCommand({
-                TableName: config.tableName,
-                Item: state,
-            });
-            await dynamoDocClient.send(putCommand);
-        } else {
-            fs.promises.writeFile(localStatePath, JSON.stringify(state, null, 4));
+let dbState: State | undefined;
+export async function saveState() {
+    log.info('Persisting state', JSON.stringify(state));
+    if (state !== dbState && Object.keys(state).length > 0) {
+        try {
+            if (config.inAws) {
+                log.info('Writing state to dynamo');
+                const putCommand = new DynamoLib.PutCommand({
+                    TableName: config.tableName,
+                    Item: state,
+                });
+                await dynamoDocClient.send(putCommand);
+            } else {
+                log.info('Writing state to file');
+                fs.promises.writeFile(localStatePath, JSON.stringify(state, null, 4));
+            }
+        } catch (err: any) {
+            log.error('Failed to persist state', err);
         }
-    } catch (err: any) {
-        log.error(err);
+    } else {
+        log.info('No change in state');
     }
 }

@@ -10,7 +10,7 @@ const config = {
     easistentPassword: process.env.EASISTENT_PASSWORD as string,
     emailFrom: process.env.EMAIL_FROM as string,
     emailTo: process.env.EMAIL_TO as string,
-    inAws: !!process.env.AWS_REGION,
+    inAws: !process.env.IS_LOCAL && !process.env.IS_OFFLINE && !!process.env.AWS_REGION,
     tableName: process.env.DYNAMODB_TABLE as string,
     logLevel: 2,
 };

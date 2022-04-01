@@ -51,7 +51,6 @@ export async function sendEmail(messages: any) {
             },
         });
         await sesClient.send(sendEmailCommand);
-        await delay(1000);
     }
 }
 

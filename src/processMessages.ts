@@ -1,9 +1,17 @@
 import { getAllItems } from './api';
-import { state, updateState } from './state';
+import { state, updateState, saveState } from './state';
 import { sendEmail } from './email';
 import * as log from './log';
 
 export async function processMessages() {
+    try {
+        await processMessagesInternal();
+    } finally {
+        await saveState();
+    }
+}
+
+async function processMessagesInternal() {
     log.info('Processing messages');
 
     const items = await getAllItems();
